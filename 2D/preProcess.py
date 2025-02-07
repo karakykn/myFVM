@@ -1,5 +1,6 @@
 import meshio
 import numpy as np
+import matplotlib.pyplot as plt
 
 """Define wall (-1),inlet(-2) and outlet(-3) in order in Gmsh
 such as:
@@ -7,6 +8,28 @@ Physical Curve("wall") = {1, 2, 3, 5, 6, 7};
 Physical Curve("inlet") = {8};
 Physical Curve("outlet") = {4};
 """
+
+def generate_edge2d(cells, neighbors):
+    edges = np.zeros((cells.shape[0]*3,4), dtype=int)
+    for i in range(cells.shape[0]):
+        for j in range(3):
+            edges[3*i+j,0], edges[3*i+j,1] = cells[i,(j+1)%3], cells[i, j]
+            edges[3*i+j,2] = i
+            edges[3 * i + j, 3] = neighbors[i,j]
+
+    edges_list = edges.tolist()  # Convert to list for easier manipulation
+    i = 0
+    while i < len(edges_list):
+        tup = edges_list[i][2:]
+        revTup = [tup[1], tup[0]]
+
+        for j in range(i + 1, len(edges_list)):
+            if edges_list[j][2:] == revTup:
+                edges_list.pop(j)  # Remove reverse pair
+                break
+
+        i += 1  # Only increment if no deletion happened
+    return np.array(edges_list)
 
 def triangle_area(x1, y1, z1, x2, y2, z2, x3, y3, z3):
     # Define the vectors AB and AC
@@ -108,6 +131,8 @@ def read_msh_v2(caseName):
                     idx = np.where(np.all(lines == pair, axis=1))
                 neighbors[i, j] = -mesh.cell_data_dict['gmsh:physical']['line'][idx][0]
 
+
+    edges = generate_edge2d(cells, neighbors)
     slopes = np.zeros((cells.shape[0], 2))
     """slopes are assigned to zero, edit this line for slopes"""
 
@@ -116,11 +141,26 @@ def read_msh_v2(caseName):
     np.savetxt(mesh_path + "areas", areas)
     np.savetxt(mesh_path + "neighbors", neighbors, fmt="%d")
     np.savetxt(mesh_path + "slopes", slopes)
+    np.savetxt(mesh_path + "edges", edges, fmt="%d")
 
-caseName = "Contraction"
-read_msh_v2(caseName)
+def visualize_mesh(caseName):
+    mesh_path = caseName + "/mesh/"
+    nodes = np.loadtxt(mesh_path + 'points')[:, :-1]
+    cells= np.loadtxt(mesh_path + 'cells', dtype=int)
+    edges = np.loadtxt(mesh_path + 'edges', dtype=int)
+    for k, i in enumerate(edges):
+        plt.plot([nodes[i[0]][0],nodes[i[1]][0]],[nodes[i[0]][1],nodes[i[1]][1]], "k")
+        plt.text( (nodes[i[0]][0]+nodes[i[1]][0])/2, (nodes[i[0]][1]+nodes[i[1]][1])/2, k, color="r")
+    for l in range(cells.shape[0]):
+        i = cells[l]
+        cellCx, cellCy = (nodes[i[0]][0] + nodes[i[1]][0] + nodes[i[2]][0]) / 3, (nodes[i[0]][1] + nodes[i[1]][1] + nodes[i[2]][1]) / 3
+        plt.text(cellCx, cellCy, l, color = "b")
+    for i, node in enumerate(nodes):
+        plt.text(node[0],node[1],i,color="k")
+    plt.title("edges red, cells blue, nodes black")
+    plt.savefig(mesh_path+'mesh.pdf')
 
 
-"""to recall flattened edge object"""
-# loaded_flattened = np.loadtxt("flattened_obj.txt", dtype=int)
-# obj_reconstructed = [loaded_flattened[i:i+3].tolist() for i in range(0, len(loaded_flattened), 3)]
+caseName = "Basicmesh"
+# read_msh_v2(caseName)
+visualize_mesh(caseName)

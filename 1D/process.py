@@ -1,6 +1,13 @@
 from source import *
 
-caseName = "1dDambreak"
-solver = Swe1D(caseName, qx_ini=0, h_ini=0.03)
-# solver.solve(t_max=1.0, dt=0.01)
-solver.iterativeSolve(0.01, 1e-8, 50)
+caseName = "1dDambreakBenchmark"
+
+'''Pre-Process'''
+# solver.generate_mesh()
+
+'''Process'''
+solver = Swe1D(caseName, qx_ini=0, h_ini=10, n=0)
+# solver.iterativeSolve(CFL=.5, simTime=50, print_step=10)
+
+'''Post-Process'''
+solver.plot()

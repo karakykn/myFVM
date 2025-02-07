@@ -22,17 +22,13 @@ class Swe2D:
         """
         mesh_path = caseName + "/mesh/"
         self.mesh = {
-            'nodes': np.loadtxt(mesh_path + 'points')[:,-1],
+            'nodes': np.loadtxt(mesh_path + 'points')[:,:-1],
             'cells': np.loadtxt(mesh_path + 'cells', dtype=int),
             'neighbors': np.loadtxt(mesh_path + 'neighbors', dtype=int),
             'areas': np.loadtxt(mesh_path + 'areas'),
-            'slopes': np.loadtxt(mesh_path + 'slopes')
+            'slopes': np.loadtxt(mesh_path + 'slopes'),
+            'edges': np.loadtxt(mesh_path + 'edges', dtype=int)
         }
-        edges = []
-        for row in self.mesh['cells']:
-            edge = [[row[i], row[i + 1]] for i in range(len(row) - 1)] + [[row[-1], row[0]]]
-            edges.append(edge)
-        self.mesh.update({'edges': edges})
         self.g = g
         self.n = n
         self.initialize_variables()
@@ -42,8 +38,6 @@ class Swe2D:
         """Initialize conserved variables and fluxes."""
         num_elements = len(self.mesh['cells'])
         self.U = np.zeros((num_elements, 3))  # Conserved variables [h, h*u, h*v] for 1D
-        self.F = np.zeros_like(self.U)  # Fluxes
-        self.S = np.zeros_like(self.U)  # Sources
         self.cellH = np.zeros(num_elements)
 
     def initial_conditions(self, qx_ini, qy_ini, h_ini):
@@ -120,47 +114,40 @@ class Swe2D:
 
     def update_solution(self, dt):
         """Update the solution using the finite volume method."""
-        num_elements = len(self.mesh['cells'])
-        for i in range(num_elements):
-            neighbors = self.mesh['neighbors'][i]
-            element = self.mesh['cells'][i]
+        self.F = np.zeros_like(self.U)  # Fluxes
+        self.S = np.zeros_like(self.U)  # Sources
+        edges = self.mesh['edges']
+        for edge in edges:
+            n2, n1 = edge[0], edge[1]
+            cell = edge[2]
+            neighbor = edge[3]
+            U_left = self.U[cell]
+            U_right = np.zeros_like(U_left)
+            if neighbor == -1:  # Boundary condition (e.g., wall )
+                U_right[0] = self.U[cell][0]
+                U_right[1] = -self.U[cell][1]
+            elif neighbor == -2:  # inlet (fixed h, may switch to hydrograph)
+                U_right[0] = 2 * self.iniH - self.U[cell][0]
+                U_right[1] = 2 * self.iniQx - self.U[cell][1]
+            elif neighbor == -3:  # outlet
+                U_right[0] = self.U[cell][0]
+                U_right[1] = self.U[cell][1]
+            else:
+                U_right = self.U[neighbor]
 
-            # Loop over each edge of the triangle
-            for j, neighbor in enumerate(neighbors):
-                # Get left and right states
-                U_left = self.U[i]
-                U_right = np.zeros_like(U_left)
-                if neighbor == -1:  # Boundary condition (e.g., wall )
-                    U_right[0] = self.U[i][0]
-                    U_right[1] = -self.U[i][1]
-                    U_right[2] = -self.U[i][2]
-                elif neighbor == -2: # inlet (fixed h, may switch to hydrograph)
-                    U_right[0] = 2*self.iniH - self.U[i][0]
-                    U_right[1] = 2 * self.iniQx - self.U[i][1]
-                    U_right[2] = 2 * self.iniQy - self.U[i][2]
-                elif neighbor == -3: # outlet
-                    U_right[0] = self.U[i][0]
-                    U_right[1] = self.U[i][1]
-                    U_right[2] = self.U[i][2]
-                else:
-                    U_right = self.U[neighbor]
+            edge_vector = self.mesh['nodes'][n2] - self.mesh['nodes'][n1]
+            normal = -np.array([-edge_vector[1], edge_vector[0]])
+            normal = normal / np.linalg.norm(normal)
+            edge_length = np.linalg.norm(edge_vector)
 
-                # Compute normal vector for the edge
-                n1, n2 = element[j], element[(j + 1) % 3]
-                edge_vector = self.mesh['nodes'][n2] - self.mesh['nodes'][n1]
-                normal = -np.array([-edge_vector[1], edge_vector[0]])  # Perpendicular
-                normal = normal / np.linalg.norm(normal)  # Normalize
+            flux = self.compute_flux(U_left, U_right, normal)
+            self.F[cell] += flux * edge_length/ self.mesh['areas'][cell]
+            if neighbor >= 0:
+                self.F[neighbor] -= flux * edge_length / self.mesh['areas'][cell]
 
-                # Compute flux across the edge
-                flux = self.compute_flux(U_left, U_right, normal)
-                edge_length = np.linalg.norm(edge_vector)
-
-                # Update flux for the element
-                self.F[i] += flux * edge_length / self.mesh['areas'][i]
-
+        for i in range(self.mesh["cells"].shape[0]):
             self.S[i] = self.compute_source(i)
 
-            # Time integration (Euler method)
             self.U[i] += dt * (-self.F[i] + self.S[i])
 
     def solve(self, t_max, dt):
