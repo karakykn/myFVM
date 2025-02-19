@@ -1,6 +1,7 @@
 from source import *
 
-caseName = 'Basicmesh'
-solver = Swe2D(caseName, qx_ini=0.06721311475409837, qy_ini=0, h_ini=0.03)
-# solver.solve(t_max=1.0, dt=0.01)
-solver.iterativeSolve(0.01, 1e-8, 2)
+# caseName = input("Enter the name of the case:\n")
+caseName = 'release/release_upleft'
+inputF = read_input(caseName)
+solver = Swe2D(caseName, startTime=inputF[0], n=inputF[1], inlet=inputF[-2])
+solver.iterativeSolve(CFL=inputF[2], simTime=inputF[3], print_step=inputF[4])

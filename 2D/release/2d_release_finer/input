@@ -1,0 +1,36 @@
+start time: (enter the exact time in with 4 decimals after the second. enter 0 only for 0)
+0
+
+mannings n:
+0
+
+CFL:
+.65
+
+simulation Time:
+2
+
+Print step: (records every ith iteration)
+50
+
+initial bounds and values for h: ([[x0,x1],[y0,y1]])
+[[.4,.6],[.4,.6]]
+.3
+
+initial bounds and values for u:
+[[0,1],[0,1]]
+0
+
+initial bounds and values for v:
+[[0,1],[0,1]]
+0
+
+interactive plot (1 for yes 0 for no)
+1
+
+axlimsmax min for plot: (x,u,v)
+[.3, .5, .5]
+[0, -.5, -.5]
+
+visualize empty mesh as a pdf?: (1 for yes)
+0

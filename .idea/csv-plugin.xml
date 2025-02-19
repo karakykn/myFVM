@@ -3,77 +3,105 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/1D/1dDambreak/output/h0.csv">
+        <entry key="/1D/1dDambreakBenchmark/run/0/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h1.csv">
+        <entry key="/2D/2d_release/run/0.0025/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h10.csv">
+        <entry key="/2D/2d_release/run/0/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h1280.csv">
+        <entry key="/2D/2d_release/run/0/u.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h1300.csv">
+        <entry key="/2D/2d_release/run/0/v.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h2.csv">
+        <entry key="/2D/2d_release_finer/run/0/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h231.csv">
+        <entry key="/2D/Basicmesh/base0/run/0/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreak/output/h3.csv">
+        <entry key="/2D/Basicmesh/base1/run/0.0874/u.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreakBenchmark/output/0/h.csv">
+        <entry key="/2D/Basicmesh/base3/run/0/h.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreakBenchmark/output/50.4819/h.csv">
+        <entry key="/2D/Basicmesh/base3/run/0/u.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/1D/1dDambreakCoarse/output/h0.csv">
+        <entry key="/2D/Contraction/run/0/h.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/2D/Contraction/run/0/u.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/2D/release/release_mid/run/0/h.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/2D/release/release_mid/run/1.0007/h.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/2D/release/release_mid/run/1.0007/u.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

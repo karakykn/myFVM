@@ -1,0 +1,35 @@
+start time: (enter the exact time in with 4 decimals after the second. enter 0 only for 0)
+0
+
+mannings n:
+0
+
+CFL:
+.3
+
+simulation Time:
+10
+
+Print step: (records every ith iteration)
+200
+
+initial bounds and values for h: ([[x0,x1],[y0,y1]])
+[[0,4],[0,1]]
+.03
+
+initial bounds and values for u:
+[[0,4],[0,1]]
+2.2401
+
+initial bounds and values for v:
+[[0,1],[0,1]]
+0
+
+interactive plot (1 for yes 0 for no)
+0
+
+visualize empty mesh as a pdf?: (1 for yes)
+0
+
+inlet boundary conditions h,u,v: (may adapt to flow hydrograph later)
+[.03, 2.2401, 0]
